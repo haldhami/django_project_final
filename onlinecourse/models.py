@@ -3,6 +3,7 @@ import sys
 from django.utils.timezone import now
 try:
     from django.db import models
+    from django.contrib.postgres.fields import ArrayField
 except Exception:
     print("There was an error loading django modules. Do you have django installed?")
     sys.exit()
@@ -113,7 +114,13 @@ class Question(models.Model):
     question_grade = models.FloatField(default=0)
 
     def check_correct(self, selected_ids):
-        pass
+        all_answers = self.choice_set.filter(choice_correct=True).count()
+        selected_correct = self.choice_set.filter(choice_correct=True, id__in=selected_ids).count()
+        if all_answers == selected_correct:
+            return 1, self.question_grade
+        else:
+            return 0, self.question_grade
+
 
     # <HINT> A sample model method to calculate if learner get the score of the question
     #def is_get_score(self, selected_ids):
@@ -147,5 +154,6 @@ class Choice(models.Model):
 class Submission(models.Model):
    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
    choices = models.ManyToManyField(Choice)
+   selected_ids = models.CharField(null=False, max_length=50, default='')
    # Think I need to include a selected_ids here to obtain user choice selection
    # Then calls function in Question class to calculate score for user

@@ -72,7 +72,7 @@
 
             <!-- <HINT> Create a form to collect the selected choices for all questions -->
             <!-- <HINT> For each question choice, you may create a checkbox input like
-            <input type="check" name="choice_{{choice.id}}" id="{{choice.id}}" ...>
+            <input type="check" name="choice_{{choice.id}}" id="{{choice.id}}" ...>  {{course.id}}/submit/
             -->
             <br>
             <div class="col text-center">
@@ -80,7 +80,7 @@
             </div>
             <br>
             <div id="exam" class="collapse">
-                <form id="questionform" action="submit" method="post">
+                <form id="questionform" action="submit/" method="post">
                     {% for question in course.question_set.all %}
                         <div class="card mt-1">
                             <div class="card-header"><h5>{{question.question_text}}</h5></div>

@@ -36,19 +36,39 @@
 </nav>
 
 <div class="container-fluid">
-    {% if grade > 80 %}
+    {% if grade >= 80 %}
     <div class="alert alert-success">
-       <!--HINT Display passed info -->
+       <b>Congratulations, {{user.first_name}}!</b> You have passed the exam and completed the course with a score of {{grade}}/100!
     </div>
         {% else %}
         <div class="alert alert-danger">
-            <!--HINT Display failed info -->
+            <b>Exam Failed.</b> Sorry, {{user.first_name}}! You have failed the exam with a score of {{grade}}/100 
         </div>
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
         {% endif %}
         <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
-            <!--HINT Display exam results-->
+            {% for question in course.question_set.all %}
+            <div class="card mt-1">
+                <div class="card-header"><h5>{{question.question_text}}</h5></div>
+                {% csrf_token %}
+                <div class="form-group">
+                    <ul class="list-group">
+                        {% for choice in question.choice_set.all %}
+                            <li class="list-group-item 
+                            {% if choice.choice_correct == True and choice.id in selected_ids %}list-group-item-success
+                            {% elif choice.choice_correct == True and choice.id not in selected_ids %}list-group-item-warning
+                            {% elif choice.choice_correct == False and choice.id in selected_ids %}list-group-item-danger
+                            {% endif %}">{{choice.choice}}
+                            {% if choice.choice_correct == True and choice.id in selected_ids %}&nbsp;&nbsp;&nbsp;&nbsp;<p style="color:black">Well done!</p>
+                            {% elif choice.choice_correct == True and choice.id not in selected_ids %}&nbsp;&nbsp;&nbsp;&nbsp;<p style="color:black">You didn't select this correct answer</p>
+                            {% elif choice.choice_correct == False and choice.id in selected_ids %}&nbsp;&nbsp;&nbsp;&nbsp;<p style="color:black">You selected this wrong answer</p>
+                            {% endif %}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </body>
